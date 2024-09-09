@@ -1,8 +1,16 @@
-import { Controller, Get, Post, Put, Param, Body, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Param,
+  Body,
+  Delete,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Users } from './users.entity';
 
-@Controller('users')
+@Controller('api/v1/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -16,7 +24,9 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<{ message: string; user: Users }> {
+  async findOne(
+    @Param('id') id: string,
+  ): Promise<{ message: string; user: Users }> {
     const user = await this.usersService.findOne(id);
     return {
       message: `User with ID ${id} fetched successfully`,
