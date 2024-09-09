@@ -15,10 +15,7 @@ export class UsersService {
   }
 
   findOne(id: string): Promise<Users> {
-    return this.usersRepository.findOne({
-      where: { user_id: id },
-      relations: ['gender', 'role'],
-    });
+    return this.usersRepository.findOne({ where: { user_id: id }, relations: ['gender', 'role'] });
   }
 
   async create(user: Users): Promise<Users> {

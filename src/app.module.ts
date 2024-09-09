@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';  // Importa ConfigModule y ConfigService
+import { ConfigModule, ConfigService } from '@nestjs/config'; 
 import { UsersModule } from './users/users.module';
 import { RoleModule } from './role/role.module';
 import { GenderModule } from './gender/gender.module';
@@ -22,6 +22,9 @@ import { GenderModule } from './gender/gender.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
+        ssl: {
+          rejectUnauthorized: false, // Esta opción desactiva la validación de certificado SSL
+        },
         autoLoadEntities: true,
         synchronize: true,  // Desactivar en producción
       }),

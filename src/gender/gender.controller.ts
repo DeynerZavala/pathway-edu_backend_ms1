@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Param,
-  Body,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Get, Post, Put, Param, Body, Delete } from '@nestjs/common';
 import { GenderService } from './gender.service';
 import { Gender } from './gender.entity';
 
@@ -30,10 +22,7 @@ export class GenderController {
   }
 
   @Put(':id')
-  update(
-    @Param('id') id: number,
-    @Body() gender: Partial<Gender>,
-  ): Promise<Gender> {
+  update(@Param('id') id: number, @Body() gender: Partial<Gender>): Promise<Gender> {
     return this.genderService.update(id, gender);
   }
 
