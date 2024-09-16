@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config'; 
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { RoleModule } from './role/role.module';
 import { GenderModule } from './gender/gender.module';
@@ -15,19 +15,24 @@ import { GenderModule } from './gender/gender.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('DB_HOST'),
-        port: configService.get('DB_PORT'),
-        username: configService.get('DB_USERNAME'),
-        password: configService.get('DB_PASSWORD'),
-        database: configService.get('DB_DATABASE'),
-        ssl: {
-          rejectUnauthorized: false, // Esta opción desactiva la validación de certificado SSL
-        },
-        autoLoadEntities: true,
-        synchronize: true,  // Desactivar en producción
-      }),
+      useFactory: (configService: ConfigService) => {
+        const isSSL = configService.get('DB_SSL') === 'true'; // Variable de entorno para habilitar/deshabilitar SSL
+        return {
+          type: 'postgres',
+          host: configService.get('DB_HOST'),
+          port: +configService.get<number>('DB_PORT'),
+          username: configService.get('DB_USERNAME'),
+          password: configService.get('DB_PASSWORD'),
+          database: configService.get('DB_DATABASE'),
+          ssl: isSSL
+            ? {
+                rejectUnauthorized: false,
+              }
+            : false, // Deshabilita SSL si no es necesario
+          autoLoadEntities: true,
+          synchronize: true, // Desactivar en producción
+        };
+      },
     }),
     UsersModule,
     RoleModule,
