@@ -62,4 +62,20 @@ export class UsersController {
       message: `User with ID ${id} has been deleted successfully`,
     };
   }
+
+  // Verificación de usuario
+  @Post('login')
+  async login(
+    @Body() body: { email: string; password: string },
+  ): Promise<{ message: string; user?: any }> {
+    const user = await this.usersService.validateUser(
+      body.email,
+      body.password,
+    );
+    if (user) {
+      return { message: 'User logged in successfully', user };
+    } else {
+      return { message: 'Invalid credentials' };
+    }
+  }
 }
