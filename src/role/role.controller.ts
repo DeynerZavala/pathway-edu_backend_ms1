@@ -2,40 +2,41 @@ import {
   Controller,
   Get,
   Post,
-  Put,
-  Param,
   Body,
+  Param,
   Delete,
+  Put,
 } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 import { RoleService } from './role.service';
 import { Role } from './role.entity';
 
-@Controller('api/role')
+@Controller()
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
-  @Get()
-  findAll(): Promise<Role[]> {
+  @MessagePattern({ cmd: 'get_roles' })
+  async getRoles(): Promise<Role[]> {
     return this.roleService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number): Promise<Role> {
+  @MessagePattern({ cmd: 'get_role_by_id' })
+  async getRoleById(id: number): Promise<Role> {
     return this.roleService.findOne(id);
   }
 
-  @Post()
-  create(@Body() role: Role): Promise<Role> {
+  @MessagePattern({ cmd: 'create_role' })
+  async createRole(role: Role): Promise<Role> {
     return this.roleService.create(role);
   }
 
-  @Put(':id')
-  update(@Param('id') id: number, @Body() role: Partial<Role>): Promise<Role> {
-    return this.roleService.update(id, role);
+  @MessagePattern({ cmd: 'update_role' })
+  async updateRole(data: { id: number; role: Partial<Role> }): Promise<Role> {
+    return this.roleService.update(data.id, data.role);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
+  @MessagePattern({ cmd: 'delete_role' })
+  async deleteRole(id: number): Promise<void> {
     return this.roleService.remove(id);
   }
 }

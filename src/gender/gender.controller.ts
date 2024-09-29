@@ -1,44 +1,37 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Param,
-  Body,
-  Delete,
-} from '@nestjs/common';
+import { Controller, Injectable } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 import { GenderService } from './gender.service';
 import { Gender } from './gender.entity';
 
-@Controller('api/gender')
+@Controller()
 export class GenderController {
   constructor(private readonly genderService: GenderService) {}
 
-  @Get()
-  findAll(): Promise<Gender[]> {
+  @MessagePattern({ cmd: 'get_genders' })
+  async getGenders(): Promise<Gender[]> {
     return this.genderService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number): Promise<Gender> {
+  @MessagePattern({ cmd: 'get_gender_by_id' })
+  async getGenderById(id: number): Promise<Gender> {
     return this.genderService.findOne(id);
   }
 
-  @Post()
-  create(@Body() gender: Gender): Promise<Gender> {
+  @MessagePattern({ cmd: 'create_gender' })
+  async createGender(gender: Gender): Promise<Gender> {
     return this.genderService.create(gender);
   }
 
-  @Put(':id')
-  update(
-    @Param('id') id: number,
-    @Body() gender: Partial<Gender>,
-  ): Promise<Gender> {
-    return this.genderService.update(id, gender);
+  @MessagePattern({ cmd: 'update_gender' })
+  async updateGender(data: {
+    id: number;
+    gender: Partial<Gender>;
+  }): Promise<Gender> {
+    return this.genderService.update(data.id, data.gender);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
+  @MessagePattern({ cmd: 'delete_gender' })
+  async deleteGender(id: number): Promise<void> {
     return this.genderService.remove(id);
   }
 }
