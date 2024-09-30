@@ -43,10 +43,16 @@ export class UsersController {
   async loginUser(credentials: {
     email: string;
     password: string;
-  }): Promise<any> {
-    return await this.usersService.validateUser(
+  }): Promise<{ message: string; user?: any }> {
+    const user = await this.usersService.validateUser(
       credentials.email,
       credentials.password,
     );
+    if (user) {
+      return { message: 'User logged in successfully', user };
+    } else {
+      return { message: 'Invalid credentials' };
+    }
   }
+  
 }
