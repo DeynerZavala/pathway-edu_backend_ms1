@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Gender } from '../gender/gender.entity';
 import { Role } from '../role/role.entity';
 
@@ -22,11 +28,11 @@ export class Users {
   @Column({ type: 'date' })
   date_of_birth: string;
 
-  @ManyToOne(() => Gender)
+  @ManyToOne(() => Gender, { eager: true })
   @JoinColumn({ name: 'gender_id' })
   gender: Gender;
 
-  @ManyToOne(() => Role)
+  @ManyToOne(() => Role, { eager: true })
   @JoinColumn({ name: 'role_id' })
   role: Role;
 

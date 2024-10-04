@@ -8,7 +8,7 @@ async function bootstrap() {
     {
       transport: Transport.TCP,
       options: {
-        host: 'ms1', // Puede ser '0.0.0.0' para exponer en toda la red
+        host: 'ms1', 
         port: 3001, // El puerto donde escuchará este microservicio
       },
     },

@@ -3,28 +3,50 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Users } from './users.entity';
 import * as bcrypt from 'bcrypt';
+import { Gender } from 'src/gender/gender.entity';
+import { Role } from 'src/role/role.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(Users)
     private usersRepository: Repository<Users>,
+    @InjectRepository(Gender)
+    private genderRepository: Repository<Gender>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
   ) {}
 
   findAll(): Promise<Users[]> {
-    return this.usersRepository.find({ relations: ['gender', 'role'] });
+    return this.usersRepository.find();
   }
 
   findOne(id: string): Promise<Users> {
     return this.usersRepository.findOne({
       where: { user_id: id },
-      relations: ['gender', 'role'],
     });
   }
 
   async create(user: Users): Promise<Users> {
+    // Supongamos que gender_id y role_id son propiedades en el objeto user que recibes.
+    const gender = await this.genderRepository.findOne({
+      where: { gender_id: user.gender.gender_id },
+    });
+    const role = await this.roleRepository.findOne({
+      where: { role_id: user.role.role_id },
+    });
+
+    if (!gender || !role) {
+      throw new Error('Gender or Role not found');
+    }
+
+    // Asignar las entidades completas de Gender y Role
+    user.gender = gender;
+    user.role = role;
+
     const salt = await bcrypt.genSalt();
     user.password_hash = await bcrypt.hash(user.password_hash, salt);
+
     return this.usersRepository.save(user);
   }
 
