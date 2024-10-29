@@ -37,7 +37,7 @@ pipeline {
                                 docker stop ms1 && docker rm ms1;
                             fi;
                             docker load -i /home/jenkins/ms1.tar;
-                            docker run -d --name ms1 --network=${DOCKER_NETWORK} -p ${API_GATEWAY_PORT}:3000 ms1;
+                            docker run -d --name ms1 --network=${DOCKER_NETWORK} -p ${MS1_PORT}:3000 ms1;
                             rm /home/jenkins/ms1.tar;
                         "
                     """
