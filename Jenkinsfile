@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'master', url: 'https://github.com/DeynerZavala/pathway-edu-backend_ms1.git'
+                git branch: 'master', url: 'https://github.com/DeynerZavala/pathway-edu_backend_ms1.git'
             }
         }
 
