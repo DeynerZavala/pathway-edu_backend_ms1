@@ -4,13 +4,13 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/DeynerZavala/PathWayEdu_api-gateway.git'
+                git branch: 'main', url: 'https://github.com/DeynerZavala/PathWayEdu_ms1.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t api-gateway ."
+                sh "docker build -t ms1 ."
             }
         }
 
@@ -18,8 +18,8 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'google-cloud-jenkins', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
                     sh 'gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS'
-                    sh 'docker save api-gateway -o api-gateway.tar'
-                    sh "gcloud compute scp api-gateway.tar ${GCP_INSTANCE}:/home/jenkins/ --zone=${GCP_ZONE} --project=${GCP_PROJECT}"
+                    sh 'docker save ms1 -o ms1.tar'
+                    sh "gcloud compute scp ms1.tar ${GCP_INSTANCE}:/home/jenkins/ --zone=${GCP_ZONE} --project=${GCP_PROJECT}"
                 }
             }
         }
@@ -33,12 +33,12 @@ pipeline {
                             if ! docker network inspect ${DOCKER_NETWORK} &> /dev/null; then
                                 docker network create ${DOCKER_NETWORK};
                             fi;
-                            if [ \$(docker ps -q -f name=api-gateway) ]; then
-                                docker stop api-gateway && docker rm api-gateway;
+                            if [ \$(docker ps -q -f name=ms1) ]; then
+                                docker stop ms1 && docker rm ms1;
                             fi;
-                            docker load -i /home/jenkins/api-gateway.tar;
-                            docker run -d --name api-gateway --network=${DOCKER_NETWORK} -p ${API_GATEWAY_PORT}:3000 api-gateway;
-                            rm /home/jenkins/api-gateway.tar;
+                            docker load -i /home/jenkins/ms1.tar;
+                            docker run -d --name ms1 --network=${DOCKER_NETWORK} -p ${API_GATEWAY_PORT}:3000 ms1;
+                            rm /home/jenkins/ms1.tar;
                         "
                     """
                 }
