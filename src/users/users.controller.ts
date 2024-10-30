@@ -43,7 +43,7 @@ export class UsersController {
     if (user) {
       return { message: 'User logged in successfully', user };
     } else {
-      return { message: 'Invalid credentials + cambio' };
+      return { message: 'Invalid credentials' };
     }
   }
   
