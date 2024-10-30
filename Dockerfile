@@ -1,25 +1,28 @@
 # Etapa de construcción
 FROM node:22-alpine3.19 AS builder
 
-# Configura el directorio de trabajo en la etapa de construcción
+# Configura el directorio de trabajo
 WORKDIR /usr/src/app
 
-# Copia solo los archivos necesarios para instalar dependencias
+# Copia solo los archivos de dependencias
 COPY package*.json ./
 
-# Instala las dependencias de producción
-RUN npm install --only=production
-
-# Instala dependencias de desarrollo necesarias para compilar TypeScript
-RUN npm install typescript @nestjs/cli -g
+# Instala las dependencias de desarrollo y producción
+RUN npm install
 
 # Copia el resto del código fuente
 COPY . .
 
-# Compila el proyecto TypeScript a JavaScript
+# Compila el código TypeScript
 RUN npm run build
 
-# Etapa final: imagen ligera de solo producción
+# Etapa de pruebas
+FROM builder AS tester
+
+# Ejecuta las pruebas
+RUN npm run test
+
+# Etapa final de producción
 FROM node:22-alpine3.19
 
 # Configura el directorio de trabajo en la imagen final
