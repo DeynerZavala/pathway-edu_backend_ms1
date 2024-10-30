@@ -2,8 +2,6 @@ pipeline {
     agent any
 
     stages {
-
-
         stage('Clone Repository') {
             steps {
                 git branch: 'master', url: 'https://github.com/DeynerZavala/pathway-edu_backend_ms1.git'
@@ -37,7 +35,7 @@ pipeline {
                                 docker network create ${DOCKER_NETWORK};
                             fi;
                             
-                            # Comprobar si el contenedor de la base de datos está presente y ejecutarlo o crearlo si es necesario
+                            # Verificar y crear/iniciar contenedor de PostgreSQL
                             if [ \$(docker ps -aq -f name=${DB_HOST1}) ]; then
                                 if [ ! \$(docker ps -q -f name=${DB_HOST1}) ]; then
                                     docker start ${DB_HOST1};
@@ -54,8 +52,8 @@ pipeline {
                             # Crear la base de datos solo si no existe
                             docker exec -i ${DB_HOST1} psql -U ${DB_USERNAME} -tc \\"SELECT 1 FROM pg_database WHERE datname = '${DB_NAME1}'\\" | grep -q 1 || docker exec -i ${DB_HOST1} psql -U ${DB_USERNAME} -c \\"CREATE DATABASE \\"${DB_NAME1}\\";";
 
-                            # Verificar si el contenedor del microservicio ya está en ejecución y reiniciarlo si es necesario
-                            if [ \$(docker ps -q -f name=ms1) ]; then
+                            # Eliminar el contenedor de microservicio si ya existe y ejecutarlo de nuevo
+                            if [ \$(docker ps -aq -f name=ms1) ]; then
                                 docker stop ms1 && docker rm ms1;
                             fi;
 
