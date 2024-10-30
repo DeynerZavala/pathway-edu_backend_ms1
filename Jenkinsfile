@@ -31,28 +31,15 @@ pipeline {
                     sh """
                         gcloud compute ssh ${GCP_INSTANCE} --project=${GCP_PROJECT} --zone=${GCP_ZONE} --command="
                             # Crear la red Docker si no existe
-                            if ! docker network inspect ${DOCKER_NETWORK} &> /dev/null; then
-                                docker network create ${DOCKER_NETWORK};
-                            fi;
-                            
-                            # Verificar y crear/iniciar contenedor de PostgreSQL
-                            if [ \$(docker ps -aq -f name=${DB_HOST1}) ]; then
-                                # Si el contenedor existe pero no está corriendo, iniciarlo
-                                if [ ! \$(docker ps -q -f name=${DB_HOST1}) ]; then
-                                    docker start ${DB_HOST1};
-                                fi;
-                            else
-                                # Crear y ejecutar el contenedor de la base de datos si no existe
-                                docker run -d --name ${DB_HOST1} --network=${DOCKER_NETWORK} -e POSTGRES_USER=${DB_USERNAME} -e POSTGRES_PASSWORD=${DB_PASSWORD} -e POSTGRES_DB=${DB_NAME1} -v pgdata_ms1:/var/lib/postgresql/data -p ${DB_PORT1}:5432 postgres;
-                            fi;
+                            docker network create ${DOCKER_NETWORK};
+
+                            docker start ${DB_HOST1};
+
 
                             # Esperar hasta que PostgreSQL esté listo
                             until docker exec ${DB_HOST1} pg_isready -U ${DB_USERNAME}; do
                                 sleep 5;
                             done;
-
-                            # Crear la base de datos solo si no existe
-                            docker exec -i ${DB_HOST1} psql -U ${DB_USERNAME} -tc \\"SELECT 1 FROM pg_database WHERE datname = '${DB_NAME1}'\\" | grep -q 1 || docker exec -i ${DB_HOST1} psql -U ${DB_USERNAME} -c \\"CREATE DATABASE \\"${DB_NAME1}\\";";
 
                             # Eliminar el contenedor de microservicio si ya existe y ejecutarlo de nuevo
                             docker stop ms1 && docker rm ms1;
