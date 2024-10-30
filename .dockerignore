@@ -1,33 +1,5 @@
-# Node modules y dependencias no necesarias
 node_modules
-npm-debug.log
-yarn-error.log
-
-# Archivos de entorno sensibles
-.env
-.env.local
-.env.*.local
-
-# Archivos y carpetas generados por el sistema
-.DS_Store
-Thumbs.db
-
-# Archivos de configuración de desarrollo
-docker-compose*.yml
-
-# Archivos de código fuente y pruebas
-src/
-test/
-__tests__/
-coverage/
-*.spec.ts
-*.test.ts
-
-# Archivos de salida del compilador
-dist/
-
-# Documentación y otros archivos de proyecto
-README.md
-.git/
-.idea/
-.vscode/
+dist
+.git
+Dockerfile
+docker-compose.yml
