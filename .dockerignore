@@ -4,6 +4,8 @@ Dockerfile
 docker-compose.yml
 .git
 .env
+src
+test
 
 
 # compiled output
