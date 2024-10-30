@@ -2,6 +2,15 @@ pipeline {
     agent any
 
     stages {
+
+        stage('Clean Docker Environment') {
+            steps {
+                script {
+                    sh 'docker system prune -a -f --volumes'
+                }
+            }
+        }
+        
         stage('Clone Repository') {
             steps {
                 git branch: 'master', url: 'https://github.com/DeynerZavala/pathway-edu_backend_ms1.git'
@@ -54,13 +63,7 @@ pipeline {
             }
         }
         
-        stage('Clean Docker Environment') {
-            steps {
-                script {
-                    sh 'docker system prune -a -f --volumes'
-                }
-            }
-        }
+
     }
 
     post {
