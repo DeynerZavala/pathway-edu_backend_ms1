@@ -42,7 +42,7 @@ pipeline {
                                 sleep 5;
                             done;
                             docker exec -i ${DB_HOST1} psql -U ${DB_USERNAME} -tc \\"SELECT 1 FROM pg_database WHERE datname = '${DB_NAME1}'\\" | grep -q 1 || docker exec -i ${DB_HOST1} psql -U ${DB_USERNAME} -c \\"CREATE DATABASE \\"${DB_NAME1}\\";";
-                            if [ \$(docker ps -q -f name=${DB_NAME1}) ]; then
+                            if [ \$(docker ps -q -f name=ms1) ]; then
                                 docker stop ms1 && docker rm ms1;
                             fi;
                             docker load -i /home/jenkins/ms1.tar;
@@ -58,6 +58,7 @@ pipeline {
             steps {
                 script {
                     sh 'docker system prune -a -f --volumes'
+                }
             }
         }
     }
