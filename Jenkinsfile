@@ -37,10 +37,12 @@ pipeline {
                             
                             # Verificar y crear/iniciar contenedor de PostgreSQL
                             if [ \$(docker ps -aq -f name=${DB_HOST1}) ]; then
+                                # Si el contenedor existe pero no está corriendo, iniciarlo
                                 if [ ! \$(docker ps -q -f name=${DB_HOST1}) ]; then
                                     docker start ${DB_HOST1};
                                 fi;
                             else
+                                # Crear y ejecutar el contenedor de la base de datos si no existe
                                 docker run -d --name ${DB_HOST1} --network=${DOCKER_NETWORK} -e POSTGRES_USER=${DB_USERNAME} -e POSTGRES_PASSWORD=${DB_PASSWORD} -e POSTGRES_DB=${DB_NAME1} -v pgdata_ms1:/var/lib/postgresql/data -p ${DB_PORT1}:5432 postgres;
                             fi;
 
