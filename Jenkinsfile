@@ -55,10 +55,8 @@ pipeline {
                             docker exec -i ${DB_HOST1} psql -U ${DB_USERNAME} -tc \\"SELECT 1 FROM pg_database WHERE datname = '${DB_NAME1}'\\" | grep -q 1 || docker exec -i ${DB_HOST1} psql -U ${DB_USERNAME} -c \\"CREATE DATABASE \\"${DB_NAME1}\\";";
 
                             # Eliminar el contenedor de microservicio si ya existe y ejecutarlo de nuevo
-                            if [ \$(docker ps -aq -f name=ms1) ]; then
-                                docker stop ms1 && docker rm ms1;
-                            fi;
-
+                            docker stop ms1 && docker rm ms1;
+                             
                             # Cargar y ejecutar el contenedor del microservicio
                             docker load -i /home/jenkins/ms1.tar;
                             docker run -d --name ms1 --network=${DOCKER_NETWORK} -p ${MS_PORT1}:3001 -e DB_HOST=${DB_HOST1} -e DB_PORT=5432 -e DB_USERNAME=${DB_USERNAME} -e DB_PASSWORD=${DB_PASSWORD} -e DB_DATABASE=${DB_NAME1} ms1;
