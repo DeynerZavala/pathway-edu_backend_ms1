@@ -29,8 +29,8 @@ import { GenderModule } from './gender/gender.module';
                 rejectUnauthorized: false,
               }
             : false, // Deshabilita SSL si no es necesario
-          autoLoadEntities: true,
-          synchronize: true, // Desactivar en producción
+          autoLoadEntities: false,
+          synchronize: false, // Desactivar en producción
         };
       },
     }),
