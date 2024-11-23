@@ -35,4 +35,19 @@ export class UsersController {
   async getUsersByUbigeo(ubigeoId: string): Promise<any> {
     return await this.usersService.findByUbigeo(ubigeoId);
   }
+  @MessagePattern({ cmd: 'login_user' })
+  async loginUser(credentials: {
+    email: string;
+    password: string;
+  }): Promise<{ message: string; user?: any }> {
+    const user = await this.usersService.validateUser(
+      credentials.email,
+      credentials.password,
+    );
+    if (user) {
+      return { message: 'User logged in successfully', user };
+    } else {
+      return { message: 'Invalid credentials + cambio' };
+    }
+  }
 }

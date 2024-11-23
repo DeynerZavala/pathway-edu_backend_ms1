@@ -85,4 +85,12 @@ export class UsersService {
   async findByUbigeo(ubigeoId: string): Promise<Users[]> {
     return this.usersRepository.find({ where: { ubigeo: { id: ubigeoId } } });
   }
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (user && (await bcrypt.compare(pass, user.password_hash))) {
+      const { password_hash, ...result } = user;
+      return result;
+    }
+    return null;
+  }
 }
