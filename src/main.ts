@@ -8,13 +8,13 @@ async function bootstrap() {
     {
       transport: Transport.TCP,
       options: {
-        host: 'ms1', 
+        host: 'ms1',
         port: 3001, // El puerto donde escuchará este microservicio
       },
     },
   );
 
-  // Iniciar el microservicio
+  // Iniciar el microservicios
   await app.listen();
 }
 
