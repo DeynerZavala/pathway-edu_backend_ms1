@@ -7,33 +7,43 @@ import { Ubigeo } from './ubigeo.entity';
 export class UbigeoController {
   constructor(private readonly ubigeoService: UbigeoService) {}
 
-  // Obtener todos los Ubigeos
-  @MessagePattern({ cmd: 'get_all_ubigeos' })
-  async getAllUbigeos(): Promise<Ubigeo[]> {
-    return await this.ubigeoService.findAll();
+  @MessagePattern({ cmd: 'get_countries' })
+  async getCountries(): Promise<Ubigeo[]> {
+    return this.ubigeoService.getCountries();
   }
 
-  // Obtener un Ubigeo por ID
-  @MessagePattern({ cmd: 'get_ubigeo_by_id' })
-  async getUbigeoById(id: string): Promise<Ubigeo> {
-    return await this.ubigeoService.findOne(id);
+  @MessagePattern({ cmd: 'get_departamentos' })
+  async getDepartamentos(parentId: string): Promise<Ubigeo[]> {
+    return this.ubigeoService.getDepartamentos(parentId);
   }
 
-  // Crear un nuevo Ubigeo
+  @MessagePattern({ cmd: 'get_provincias' })
+  async getProvincias(departmentId: string): Promise<Ubigeo[]> {
+    return this.ubigeoService.getProvincias(departmentId);
+  }
+
+  @MessagePattern({ cmd: 'get_ciudades' })
+  async getCiudades(provinceId: string): Promise<Ubigeo[]> {
+    return this.ubigeoService.getCiudades(provinceId);
+  }
+
+  @MessagePattern({ cmd: 'find_ubigeo' })
+  async findUbigeo(id: string): Promise<Ubigeo> {
+    return this.ubigeoService.findOne(id);
+  }
+
+  @MessagePattern({ cmd: 'find_children' })
+  async findChildren(parentId: string): Promise<Ubigeo[]> {
+    return this.ubigeoService.findChildren(parentId);
+  }
+
   @MessagePattern({ cmd: 'create_ubigeo' })
   async createUbigeo(data: { id: string; name: string }): Promise<Ubigeo> {
-    return await this.ubigeoService.createUbigeo(data.id, data.name);
+    return this.ubigeoService.createUbigeo(data.id, data.name);
   }
 
-  // Obtener hijos de un Ubigeo
-  @MessagePattern({ cmd: 'get_children_by_ubigeo' })
-  async getChildrenByUbigeo(parentId: string): Promise<Ubigeo[]> {
-    return await this.ubigeoService.findChildren(parentId);
-  }
-
-  // Eliminar un Ubigeo por ID
   @MessagePattern({ cmd: 'delete_ubigeo' })
   async deleteUbigeo(id: string): Promise<void> {
-    return await this.ubigeoService.deleteUbigeo(id);
+    return this.ubigeoService.deleteUbigeo(id);
   }
 }

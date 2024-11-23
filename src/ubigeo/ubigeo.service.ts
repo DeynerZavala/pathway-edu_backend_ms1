@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ubigeo } from './ubigeo.entity';
+import { Controller, Get, Query, Param, Inject } from '@nestjs/common';
 
 @Injectable()
 export class UbigeoService {
@@ -19,6 +20,39 @@ export class UbigeoService {
 
     const ubigeo = this.ubigeoRepository.create({ id, name });
     return this.ubigeoRepository.save(ubigeo);
+  }
+  async getCountries(): Promise<Ubigeo[]> {
+    return await this.ubigeoRepository
+      .createQueryBuilder('ubigeo')
+      .where("ubigeo.id NOT LIKE '%-%'")
+      .getMany();
+  }
+
+  async getDepartamentos(parentId: string): Promise<Ubigeo[]> {
+    const prefix = `${parentId}-`; // Construir el prefijo del país (e.g., "01-")
+
+    return await this.ubigeoRepository
+      .createQueryBuilder('ubigeo')
+      .where('ubigeo.id LIKE :prefix', { prefix: `${prefix}%` }) // IDs que empiezan con el prefijo
+      .andWhere(
+        "CHAR_LENGTH(ubigeo.id) - CHAR_LENGTH(REPLACE(ubigeo.id, '-', '')) = 1",
+      ) // Exactamente 1 guion
+      .getMany();
+  }
+
+  async getProvincias(departmentId: string): Promise<Ubigeo[]> {
+    return await this.ubigeoRepository
+      .createQueryBuilder('ubigeo')
+      .where('ubigeo.id LIKE :prefix', { prefix: `${departmentId}-%` }) // Filtrar por departamento
+      .andWhere('LENGTH(ubigeo.id) - LENGTH(REPLACE(ubigeo.id, "-", "")) = 2') // Exactamente 2 guiones
+      .getMany();
+  }
+  async getCiudades(provinceId: string): Promise<Ubigeo[]> {
+    return await this.ubigeoRepository
+      .createQueryBuilder('ubigeo')
+      .where('ubigeo.id LIKE :prefix', { prefix: `${provinceId}-%` }) // Filtrar por provincia
+      .andWhere('LENGTH(ubigeo.id) - LENGTH(REPLACE(ubigeo.id, "-", "")) = 3') // Exactamente 3 guiones
+      .getMany();
   }
 
   // Obtener todos los Ubigeos
