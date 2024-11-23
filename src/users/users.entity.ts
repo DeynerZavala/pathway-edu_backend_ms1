@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Gender } from '../gender/gender.entity';
 import { Role } from '../role/role.entity';
+import { Ubigeo } from '../ubigeo/ubigeo.entity';
 
 @Entity()
 export class Users {
@@ -35,6 +36,10 @@ export class Users {
   @ManyToOne(() => Role, { eager: true })
   @JoinColumn({ name: 'role_id' })
   role: Role;
+
+  @ManyToOne(() => Ubigeo, { eager: true }) // Relación con Ubigeo
+  @JoinColumn({ name: 'ubigeo_id' })
+  ubigeo: Ubigeo;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   registration_date: Date;

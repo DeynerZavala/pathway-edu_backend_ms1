@@ -4,6 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { RoleModule } from './role/role.module';
 import { GenderModule } from './gender/gender.module';
+import { UbigeoController } from './ubigeo/ubigeo.controller';
+import { UbigeoModule } from './ubigeo/ubigeo.module';
 
 @Module({
   imports: [
@@ -29,14 +31,18 @@ import { GenderModule } from './gender/gender.module';
                 rejectUnauthorized: false,
               }
             : false, // Deshabilita SSL si no es necesario
-          autoLoadEntities: false,
-          synchronize: false, // Desactivar en producción
+          autoLoadEntities: true,
+          synchronize: true, // Desactivar en producción
         };
       },
     }),
     UsersModule,
     RoleModule,
     GenderModule,
+    UbigeoModule,
+    UbigeoModule,
   ],
+  controllers: [UbigeoController],
+  providers: [],
 })
 export class AppModule {}

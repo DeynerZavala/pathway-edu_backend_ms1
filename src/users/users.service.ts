@@ -5,6 +5,7 @@ import { Users } from './users.entity';
 import * as bcrypt from 'bcrypt';
 import { Gender } from 'src/gender/gender.entity';
 import { Role } from 'src/role/role.entity';
+import { Ubigeo } from 'src/ubigeo/ubigeo.entity';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,8 @@ export class UsersService {
     private genderRepository: Repository<Gender>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+    @InjectRepository(Ubigeo)
+    private ubigeoRepository: Repository<Ubigeo>,
   ) {}
 
   findAll(): Promise<Users[]> {
@@ -28,21 +31,23 @@ export class UsersService {
   }
 
   async create(user: Users): Promise<Users> {
-    // Supongamos que gender_id y role_id son propiedades en el objeto user que recibes.
     const gender = await this.genderRepository.findOne({
       where: { gender_id: user.gender.gender_id },
     });
     const role = await this.roleRepository.findOne({
       where: { role_id: user.role.role_id },
     });
+    const ubigeo = await this.ubigeoRepository.findOne({
+      where: { id: user.ubigeo.id },
+    });
 
-    if (!gender || !role) {
-      throw new Error('Gender or Role not found');
+    if (!gender || !role || !ubigeo) {
+      throw new Error('Gender, Role, or Ubigeo not found');
     }
 
-    // Asignar las entidades completas de Gender y Role
     user.gender = gender;
     user.role = role;
+    user.ubigeo = ubigeo;
 
     const salt = await bcrypt.genSalt();
     user.password_hash = await bcrypt.hash(user.password_hash, salt);
@@ -58,6 +63,17 @@ export class UsersService {
         salt,
       );
     }
+
+    if (userUpdates.ubigeo) {
+      const ubigeo = await this.ubigeoRepository.findOne({
+        where: { id: userUpdates.ubigeo.id },
+      });
+      if (!ubigeo) {
+        throw new Error('Ubigeo not found');
+      }
+      userUpdates.ubigeo = ubigeo;
+    }
+
     await this.usersRepository.update(id, userUpdates);
     return this.findOne(id);
   }
@@ -66,12 +82,7 @@ export class UsersService {
     await this.usersRepository.delete(id);
   }
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersRepository.findOne({ where: { email } });
-    if (user && (await bcrypt.compare(pass, user.password_hash))) {
-      const { password_hash, ...result } = user;
-      return result;
-    }
-    return null;
+  async findByUbigeo(ubigeoId: string): Promise<Users[]> {
+    return this.usersRepository.find({ where: { ubigeo: { id: ubigeoId } } });
   }
 }
