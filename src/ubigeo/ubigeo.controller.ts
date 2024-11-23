@@ -37,6 +37,11 @@ export class UbigeoController {
     return this.ubigeoService.findChildren(parentId);
   }
 
+  @MessagePattern({ cmd: 'get_ubigeo' })
+  async findAll() {
+    return this.ubigeoService.findAll;
+  }
+
   @MessagePattern({ cmd: 'create_ubigeo' })
   async createUbigeo(data: { id: string; name: string }): Promise<Ubigeo> {
     return this.ubigeoService.createUbigeo(data.id, data.name);

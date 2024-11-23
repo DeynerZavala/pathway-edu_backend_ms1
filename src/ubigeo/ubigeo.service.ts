@@ -34,24 +34,27 @@ export class UbigeoService {
     return await this.ubigeoRepository
       .createQueryBuilder('ubigeo')
       .where('ubigeo.id LIKE :prefix', { prefix: `${prefix}%` }) // IDs que empiezan con el prefijo
-      .andWhere(
-        "CHAR_LENGTH(ubigeo.id) - CHAR_LENGTH(REPLACE(ubigeo.id, '-', '')) = 1",
-      ) // Exactamente 1 guion
+      .andWhere("LENGTH(ubigeo.id) - LENGTH(REPLACE(ubigeo.id, '-', '')) = 1") // Exactamente 1 guion
       .getMany();
   }
 
   async getProvincias(departmentId: string): Promise<Ubigeo[]> {
+    const prefix = `${departmentId}-`; // Construir el prefijo del departamento (e.g., "01-01-")
+
     return await this.ubigeoRepository
       .createQueryBuilder('ubigeo')
-      .where('ubigeo.id LIKE :prefix', { prefix: `${departmentId}-%` }) // Filtrar por departamento
-      .andWhere('LENGTH(ubigeo.id) - LENGTH(REPLACE(ubigeo.id, "-", "")) = 2') // Exactamente 2 guiones
+      .where('ubigeo.id LIKE :prefix', { prefix: `${prefix}%` }) // IDs que empiezan con el prefijo
+      .andWhere("LENGTH(ubigeo.id) - LENGTH(REPLACE(ubigeo.id, '-', '')) = 2") // Exactamente 2 guiones
       .getMany();
   }
+
   async getCiudades(provinceId: string): Promise<Ubigeo[]> {
+    const prefix = `${provinceId}-`; // Construir el prefijo de la provincia (e.g., "01-01-01-")
+
     return await this.ubigeoRepository
       .createQueryBuilder('ubigeo')
-      .where('ubigeo.id LIKE :prefix', { prefix: `${provinceId}-%` }) // Filtrar por provincia
-      .andWhere('LENGTH(ubigeo.id) - LENGTH(REPLACE(ubigeo.id, "-", "")) = 3') // Exactamente 3 guiones
+      .where('ubigeo.id LIKE :prefix', { prefix: `${prefix}%` }) // IDs que empiezan con el prefijo
+      .andWhere("LENGTH(ubigeo.id) - LENGTH(REPLACE(ubigeo.id, '-', '')) = 3") // Exactamente 3 guiones
       .getMany();
   }
 
